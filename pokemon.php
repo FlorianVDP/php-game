@@ -16,7 +16,7 @@ $pokemons = [
         'element' => 'plante',
         'vitesse' => 60,
         'actions' => [
-            'attaque' => 49,
+            'attaque' => 10,
             'regeneration' => 7,
         ]
     ],
@@ -26,7 +26,7 @@ $pokemons = [
         'element' => 'eau',
         'vitesse' => 63,
         'actions' => [
-            'attaque' => 48,
+            'attaque' => 10,
             'regeneration' => 5,
         ]
     ],
@@ -84,12 +84,13 @@ if ($choixJoueur['element'] === 'eau' && $choixPc['element'] === 'feu') {
     $choixJoueur['actions']['attaque'] = $choixJoueur['actions']['attaque'] * 1.5;
 }
 
-
 $compteur = 1;
 
 $vieMaxJoueur = $choixJoueur['vie'];
 $vieMaxPc = $choixPc['vie'];
+function pokemonActionJoueur(){
 
+}
 while ($choixJoueur['vie'] > 0 && $choixPc['vie'] > 0) {
 
     print_r("Tour numéro°" . $compteur . " ---------------------------------------------\n");
@@ -112,7 +113,7 @@ while ($choixJoueur['vie'] > 0 && $choixPc['vie'] > 0) {
 
     //-----_____----- Attaque pc
     $choixAttaquePc = rand(0, 10);
-    if ($choixAttaquePc < 5) {
+    if ($choixAttaquePc < 7) {
         $choixJoueur['vie'] = $choixJoueur['vie'] - $choixPc['actions']['attaque'];
         print_r("-- Votre pokemon à subit -[" . $choixPc['actions']['attaque'] . "pv], il lui reste [" . $choixJoueur['vie'] . "pv] \n");
     } else {
@@ -129,8 +130,6 @@ while ($choixJoueur['vie'] > 0 && $choixPc['vie'] > 0) {
 }
 print_r("---------------------------------------------\n");
 print_r("---------------------------------------------\n");
-print_r("\n");
-print_r('Le combat est terminé !');
-print_r("\n");
+print_r("Le combat est terminé !\n");
 print_r("---------------------------------------------\n");
 print_r("---------------------------------------------\n");
