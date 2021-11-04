@@ -113,7 +113,7 @@ while ($choixJoueur['vie'] > 0 && $choixPc['vie'] > 0) {
 
     //-----_____----- Attaque pc
     $choixAttaquePc = rand(0, 10);
-    if ($choixAttaquePc < 7) {
+    if ($choixAttaquePc < 8) {
         $choixJoueur['vie'] = $choixJoueur['vie'] - $choixPc['actions']['attaque'];
         print_r("-- Votre pokemon à subit -[" . $choixPc['actions']['attaque'] . "pv], il lui reste [" . $choixJoueur['vie'] . "pv] \n");
     } else {
