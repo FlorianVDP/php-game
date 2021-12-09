@@ -2,7 +2,7 @@
 //-----_____-----_____-----_____----- Controller
 class Controller{
     public function listCommand(){
-        $command = readline("Liste des commandes [searchMovie] [searchPeople] : ");
+        $command = readline("Liste des commandes [searchMovie] [searchPeople] [searchTVShow] : ");
         $this->executCommand($command);
     }
     public function executCommand($command){
@@ -14,6 +14,10 @@ class Controller{
             $query = readline("Quel est le nom de la personne ? ");
             return $this->searchPeople($query);
         }
+        elseif ($command === 'searchTVShow'){
+            $query = readline("Quel est le nom du TV Show ? ");
+            return $this->searchTVShow($query);
+        }
         else{
             echo "\e[0;31;40mLa commande envoyée n'existe pas.\e[0m\n";
             die();
@@ -23,18 +27,24 @@ class Controller{
         $movieSearcher = new MovieApiSearcher();
         $movies = $movieSearcher->searchMovie($query);
         foreach ($movies as $movie){
-            Vue::render($movie);
+            View::render($movie);
         }
     }
     public function searchPeople($query){
         $peopleSearcher = new PeopleApiSearcher();
         $peoples = $peopleSearcher->searchPeople($query);
         foreach ($peoples as $people){
-            Vue::render($people);
+            View::render($people);
+        }
+    }
+    public function searchTVShow($query){
+        $tvShowhSearcher = new TvShowApiSearcher();
+        $tvShows = $tvShowhSearcher->searchTVShow($query);
+        foreach ($tvShows as $tvShow){
+            View::render($tvShow);
         }
     }
 }
-
 //-----_____-----_____-----_____----- Service
 class MovieApiSearcher{
     const baseUrl = "https://api.themoviedb.org/3";
@@ -92,7 +102,6 @@ class PeopleApiSearcher{
             1
         );
         $reponse = json_decode(curl_exec($curl), true);
-        var_dump($reponse);
         $peoples = [];
         /*
          * for($i=0; $i <= 4; $i++){
@@ -105,6 +114,41 @@ class PeopleApiSearcher{
             if($key > 3) break;
         }
         return $peoples;
+    }
+}
+class TvShowApiSearcher{
+    const baseUrl = "https://api.themoviedb.org/3";
+    const searchMovieSlug = "/search/tv";
+    const apiKey = "5ebe0843b2e373ffa159f5683b21b7de";
+    const lang = "en-US";
+    const page = "1";
+    public function searchTVShow($tvShowName) : array // La function s'attend à retourner un array (TypeCasting)
+    {
+        $curl = curl_init();
+        curl_setopt_array(
+            $curl, [
+                CURLOPT_URL => self::baseUrl.self::searchMovieSlug."?api_key=".self::apiKey."&language=".self::lang."&query=".$tvShowName."&page=".self::page,
+                CURLOPT_CUSTOMREQUEST => "GET"
+            ]
+        );
+        curl_setopt(
+            $curl,
+            CURLOPT_RETURNTRANSFER,
+            1
+        );
+        $reponse = json_decode(curl_exec($curl), true);
+        $peoples = [];
+        /*
+         * for($i=0; $i <= 4; $i++){
+            $movie = new Movie($reponse["results"][$i]["title"],$reponse["results"][$i]["overview"]);
+            $movies[] = $movie;
+        }
+        */
+        foreach ($reponse["results"] as $key => $tvShow) {
+            $tvShows[] =  new TVShow($tvShow["name"],$tvShow["first_air_date"]);
+            if($key > 3) break;
+        }
+        return $tvShows;
     }
 }
 
@@ -155,8 +199,29 @@ class People{
 
 
 }
+class TVShow{
+    private $name;
+    private $date;
 
-//-----_____-----_____-----_____----- Vue
+    /**
+     * TVShow constructor.
+     * @param $name
+     * @param $date
+     */
+    public function __construct($name, $date)
+    {
+        $this->name = $name;
+        $this->first_air_date = $date;
+    }
+
+    public function __toString()
+    {
+        return "\e[0;32;40mName:\e[0m ". $this->name . " | \e[0;32;40mDate:\e[0m ". $this->first_air_date."\n";
+    }
+
+}
+
+//-----_____-----_____-----_____----- View
 class Vue{
     public static function render($object){
         echo $object;
